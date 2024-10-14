@@ -6,20 +6,25 @@ function App() {
   const [newItem, setNewItem] = useState('');
 
   // Fetch items on component mount
+  console.log("process.env:", process.env);
+  console.log("process.env.REACT_APP_NODE_ENV:", process.env.REACT_APP_NODE_ENV);
+  console.log("process.env.REACT_APP_SERVER_BASE_URL:", process.env.REACT_APP_SERVER_BASE_URL);
+  const base_url = process.env.REACT_APP_NODE_ENV === 'development' ? process.env.REACT_APP_LOCAL_BASE_URL : process.env.REACT_APP_SERVER_BASE_URL;
+
   useEffect(() => {
-    axios.get('http://localhost:5000/items')
+    axios.get(`${base_url}/items`)
       .then(response => {
         setItems(response.data);
       })
       .catch(error => {
         console.error('There was an error fetching the items!', error);
       });
-  }, []);
+  }, [base_url]);
 
   // Add a new item
   const addItem = () => {
     if (newItem.trim()) {
-      axios.post('http://localhost:5000/items', { name: newItem })
+      axios.post(`${base_url}/items`, { name: newItem })
         .then(response => {
           setItems([...items, response.data]);
           setNewItem('');
